@@ -8,12 +8,23 @@ import org.red5.server.api.scope.IScope;
 import org.red5.server.api.stream.IBroadcastStream;
 import org.red5.server.api.stream.IServerStream;
 import org.red5.server.api.stream.ISubscriberStream;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ag.video.redtube.entity.User;
+import com.ag.video.redtube.repository.UserRepository;
+import com.ag.video.redtube.security.ConnectionSecurityService;
 
 public class Application extends ApplicationAdapter {
 
 	private IScope appScope;
 
 	private IServerStream serverStream;
+	
+	@Autowired
+	private ConnectionSecurityService connectionSecurityService;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public boolean appStart(IScope app) {
@@ -45,11 +56,20 @@ public class Application extends ApplicationAdapter {
 		IScope appScope = conn.getScope();
 		log.info("App connect called for scope: {}", appScope.getName());
 		
+		userRepository.save(new User());
+		
 		// getting client parameters
 		Map<String, Object> properties = conn.getConnectParams();
 		for (Map.Entry<String, Object> e : properties.entrySet()) {
 			log.info("Connection property: {} = {}", e.getKey(), e.getValue());
 		}
+		
+		// connection security 
+		if( !connectionSecurityService.isConnectionAllowed(conn) ){
+			rejectClient();
+			return false;
+		}
+	
 		return super.appConnect(conn, params);
 	}
 
@@ -60,5 +80,13 @@ public class Application extends ApplicationAdapter {
 			serverStream.close();
 		}
 		super.appDisconnect(conn);
+	}
+
+	public ConnectionSecurityService getConnectionSecurityService() {
+		return connectionSecurityService;
+	}
+
+	public void setConnectionSecurityService(ConnectionSecurityService connectionSecurityService) {
+		this.connectionSecurityService = connectionSecurityService;
 	}
 }
