@@ -15,11 +15,53 @@
                            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 						   http://www.springframework.org/schema/mvc
         				   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
-	
-	<context:component-scan base-package="com.ag.video.redtube.controller" />
+
+	<bean id="placeholderConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="/WEB-INF/red5-web.properties" />
+	</bean>
+
+	<jpa:repositories base-package="com.ag.video.redtube.repository" />
+
+	<context:component-scan
+		base-package="com.ag.video.redtube.controller,com.ag.video.redtube.service" />
 
 	<tx:annotation-driven />
 
 	<mvc:annotation-driven />
+
+	<jpa:repositories base-package="com.ag.video.redtube.repository" />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<!-- these are C3P0 properties -->
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+		<property name="minPoolSize" value="${c3p0.minPoolSize}" />
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+	</bean>
+
+	<bean id="jpaVendorAdapter"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="showSql" value="${jpa.showSql}" />
+		<property name="generateDdl" value="${jpa.generateDdl}" />
+		<property name="database" value="${jpa.database}" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+		<!-- spring based scanning for entity classes -->
+		<property name="packagesToScan" value="com.ag.video.redtube.entity" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" />
 
 </beans>

@@ -6,8 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 @Entity
+@Table(indexes={@Index(columnList="streamName"),@Index(columnList="publisher")})
 public class StreamResource {
 
 
@@ -24,11 +27,6 @@ public class StreamResource {
 	 * 流命名
 	 */
 	private String streamName;
-	
-	/**
-	 * 流命名
-	 */
-	private String accessKey;
 	
 	/**
 	 * 可以访问此资源的用户名列表
@@ -106,14 +104,6 @@ public class StreamResource {
 
 	public void setSubscriberList(String subscriberList) {
 		this.subscriberList = subscriberList;
-	}
-
-	public String getAccessKey() {
-		return accessKey;
-	}
-
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
 	}
 	
 }

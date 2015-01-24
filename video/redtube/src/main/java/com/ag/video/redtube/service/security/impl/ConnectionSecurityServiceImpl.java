@@ -12,7 +12,7 @@ public class ConnectionSecurityServiceImpl implements ConnectionSecurityService{
 	@Override
 	public boolean isConnectionAllowed(IConnection connection) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

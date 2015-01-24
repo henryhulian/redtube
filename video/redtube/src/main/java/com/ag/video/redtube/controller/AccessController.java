@@ -24,4 +24,12 @@ public class AccessController {
 		
 		return streamResource.getStreamName();
 	}
+	
+	@RequestMapping(value="/subscriberAccessUrl",method=RequestMethod.GET)
+	public String getSubscriberAccessUrl(@RequestParam String subscriber , @RequestParam String publisher ){
+		
+		StreamResource streamResource = accessService.authorizeSubscriber(subscriber, publisher);
+		
+		return streamResource.getStreamName();
+	}
 }
